@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  name      String    @map("name") @db.VarChar(255)
+  cellphone String?   @db.VarChar(11)
+  whatsapp  String    @unique @db.VarChar(11)
+  email     String?   @db.VarChar(255)
+  createdAt DateTime  @map("created_at") @default(now())
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  Tenant Tenant? @relation(fields: [tenantId], references: [id], name: "users_tenant")
+
+  @@map(name: "users")
+}
+
+enum TenantStatus {
+  active
+  inactive
+}
+
+model Tenant {
+  id         String       @id @default(uuid()) @db.Uuid
+  status     TenantStatus @default(active)
+  createdAt  DateTime  @map("created_at") @default(now())
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  
+  User       User[] @relation(name: "users_tenant")
+
+  @@map(name: "tenants")
+}

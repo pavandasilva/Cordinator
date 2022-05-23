@@ -1,0 +1,14 @@
+version: "3.1"
+
+services:
+  postgressrv:
+    image: postgres:13.0-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "schedule_dev"
+    ports:
+      - 5438:5432
+    volumes:
+      - ~/schedule/postgresql/data:/var/lib/postgresql/data
